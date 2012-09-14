@@ -6,6 +6,10 @@ A ZSH theme optimized for people who use:
 - Git
 - Unicode-compatible fonts and terminals (I use iTerm2 + Menlo)
 
+To test if your terminal and font support it, check that all the necessary characters are supported by copying the following command to your terminal: `echo "⮀±⭠ ➦✔✘⚡"`. The result should look like this:
+
+![Character Example](http://cl.ly/image/3m3b0k2g2Y1A/Screen%20Shot%202012-09-14%20at%2012.01.14%20.png)
+
 ## What does it show?
 
 - Success (✔) or failure (✘) of previous command
