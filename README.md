@@ -25,7 +25,7 @@ To test if your terminal and font support it, check that all the necessary chara
 - Working directory
 - Elevated (root) privileges (⚡)
 
-![Screenshot](https://gist.github.com/raw/3712874/de4828056ec1f04b03dbf4940f1b61e525ec9799/screenshot.png)
+![Screenshot](https://raw.github.com/gist/3712874/5d28e2d9fe2e4d0a4fda0315ad97bdafa399425c/screenshot.png)
 
 ## Future Work
 
