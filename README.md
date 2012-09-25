@@ -8,6 +8,8 @@ A ZSH theme optimized for people who use:
 
 # Compatibility
 
+**NOTE:** In all likelihood, you will need to install a [Powerline-patched font] for this theme to render correctly.
+
 To test if your terminal and font support it, check that all the necessary characters are supported by copying the following command to your terminal: `echo "⮀ ± ⭠ ➦ ✔ ✘ ⚡"`. The result should look like this:
 
 ![Character Example](http://cl.ly/content/image/2l3w443z363P/aHR0cDovL2YuY2wubHkvaXRlbXMvM2ozTjJpMDMzTzJNM0ozcDFjMjgvU2NyZWVuJTIwU2hvdCUyMDIwMTItMDktMTQlMjBhdCUyMDEyLjA2LjAyJTIwLnBuZw==)
