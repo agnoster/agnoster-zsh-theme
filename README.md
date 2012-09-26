@@ -6,6 +6,8 @@ A ZSH theme optimized for people who use:
 - Git
 - Unicode-compatible fonts and terminals (I use iTerm2 + Menlo)
 
+For Mac users, I highly recommend iTerm 2 + Solarized Dark
+
 # Compatibility
 
 **NOTE:** In all likelihood, you will need to install a [Powerline-patched font](https://gist.github.com/1595572) for this theme to render correctly.
@@ -16,8 +18,8 @@ To test if your terminal and font support it, check that all the necessary chara
 
 ## What does it show?
 
-- Success (✔) or failure (✘) of previous command
-- Hostname
+- If the previous command failed (✘)
+- User @ Hostname (if user is not DEFAULT_USER, which can then be set in your profile)
 - Git status
   - Branch (⭠) or detached head (➦)
   - Current branch / SHA1 in detached head state
@@ -25,7 +27,7 @@ To test if your terminal and font support it, check that all the necessary chara
 - Working directory
 - Elevated (root) privileges (⚡)
 
-![Screenshot](https://gist.github.com/raw/3712874/de4828056ec1f04b03dbf4940f1b61e525ec9799/screenshot.png)
+![Screenshot](https://raw.github.com/gist/3712874/5d28e2d9fe2e4d0a4fda0315ad97bdafa399425c/screenshot.png)
 
 ## Future Work
 
