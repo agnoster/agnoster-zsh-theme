@@ -37,4 +37,4 @@ It's currently hideously slow, especially inside a git repo. I guess it's not ov
 
 Would be nice for the code to be a bit more sane and re-usable. Something to easily append a section with a given FG/BG, and add the correct opening and closing.
 
-Apparently the unicode characters don't display correctly on all systems. It would be nice to be able to say "this font will make it work, always". But what font?
+Also the dependency on a powerline-patched font is regrettable, but there's really no way to get that effect without it. Ideally there would be a way to check for compatibility, or maybe even fall back to one of the similar unicode glyphs.
