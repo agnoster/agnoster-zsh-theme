@@ -26,7 +26,15 @@
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
 CURRENT_BG='NONE'
-SEGMENT_SEPARATOR=''
+
+# Characters
+SEGMENT_SEPARATOR="\ue0b0"
+PLUSMINUS="\u00b1"
+BRANCH="\ue0a0"
+DETACHED="\u27a6"
+CROSS="\u2718"
+LIGHTNING="\u26a1"
+GEAR="\u2699"
 
 # Begin a segment
 # Takes two arguments, background and foreground. Both can be omitted,
@@ -71,15 +79,15 @@ prompt_context() {
 prompt_git() {
   local ref dirty
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-    ZSH_THEME_GIT_PROMPT_DIRTY='±'
+    ZSH_THEME_GIT_PROMPT_DIRTY=$PLUSMINUS
     dirty=$(parse_git_dirty)
-    ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="$DETACHED $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
     if [[ -n $dirty ]]; then
       prompt_segment yellow black
     else
       prompt_segment green black
     fi
-    echo -n "${ref/refs\/heads\// }$dirty"
+    echo -n "${ref/refs\/heads\//$BRANCH }$dirty"
   fi
 }
 
@@ -95,9 +103,9 @@ prompt_dir() {
 prompt_status() {
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}✘"
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
+  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}$CROSS"
+  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}$LIGHTNING"
+  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
 
   [[ -n "$symbols" ]] && prompt_segment black default "$symbols"
 }
