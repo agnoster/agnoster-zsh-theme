@@ -26,6 +26,7 @@
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
 CURRENT_BG='NONE'
+PRIMARY_FG=black
 
 # Characters
 SEGMENT_SEPARATOR="\ue0b0"
@@ -71,7 +72,7 @@ prompt_context() {
   local user=`whoami`
 
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment black default "%(!.%{%F{yellow}%}.)$user@%m"
+    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@%m "
   fi
 }
 
@@ -93,7 +94,7 @@ prompt_git() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue black '%~'
+  prompt_segment blue $PRIMARY_FG ' %~ '
 }
 
 # Status:
@@ -107,7 +108,7 @@ prompt_status() {
   [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}$LIGHTNING"
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
 
-  [[ -n "$symbols" ]] && prompt_segment black default "$symbols"
+  [[ -n "$symbols" ]] && prompt_segment $PRIMARY_FG default " $symbols "
 }
 
 ## Main prompt
