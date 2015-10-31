@@ -26,7 +26,12 @@
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
 CURRENT_BG='NONE'
-PRIMARY_FG=black
+
+if [[ "$AGNOSTER_LIGHT" = "1" ]]; then
+	PRIMARY_FG=white
+else
+	PRIMARY_FG=black
+fi
 
 # Characters
 SEGMENT_SEPARATOR="\ue0b0"
