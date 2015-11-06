@@ -67,9 +67,9 @@ prompt_segment() {
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
   [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
   if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    print -n "%{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%}"
+    print -n "$bg%F{$CURRENT_BG}$SEGMENT_SEPARATOR$fg"
   else
-    print -n "%{$bg%}%{$fg%}"
+    print -n "$bg$fg"
   fi
   CURRENT_BG=$1
   [[ -n $3 ]] && print -n $3
@@ -80,11 +80,11 @@ prompt_end() {
   local SEGMENT_SEPARATOR BRANCH DETACHED PLUSMINUS CROSS LIGHTNING GEAR
   define_prompt_chars
   if [[ -n $CURRENT_BG ]]; then
-    print -n "%{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
+    print -n "%k%F{$CURRENT_BG}$SEGMENT_SEPARATOR"
   else
-    print -n "%{%k%}"
+    print -n "%k"
   fi
-  print -n "%{%f%}"
+  print -n "%f"
   CURRENT_BG=''
 }
 
@@ -96,7 +96,7 @@ prompt_context() {
   local user=`whoami`
 
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@%m "
+    prompt_segment $PRIMARY_FG default " %(!.%F{yellow}.)$user@%m "
   fi
 }
 
@@ -142,9 +142,9 @@ prompt_status() {
   define_prompt_chars
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}$CROSS"
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}$LIGHTNING"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
+  [[ $RETVAL -ne 0 ]] && symbols+="%F{red}$CROSS"
+  [[ $UID -eq 0 ]] && symbols+="%F{yellow}$LIGHTNING"
+  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%F{cyan}$GEAR"
 
   [[ -n "$symbols" ]] && prompt_segment $PRIMARY_FG default " $symbols "
 }
@@ -228,7 +228,7 @@ prompt_agnoster_setup() {
   zstyle ':vcs_info:*' actionformats '%b (%a)'
 
   setopt prompt_subst
-  PROMPT='%{%f%b%k%}$(prompt_agnoster_main) '
+  PROMPT='%f%b%k$(prompt_agnoster_main) '
 }
 
 prompt_agnoster_setup "$@"
