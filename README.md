@@ -6,7 +6,7 @@ A ZSH theme optimized for people who use:
 - Git
 - Unicode-compatible fonts and terminals (I use iTerm2 + Menlo)
 
-For Mac users, I highly recommend iTerm 2 + Solarized Dark
+For Mac users, I highly recommend iTerm 2 + Solarized Dark.
 
 # Compatibility
 
@@ -16,7 +16,9 @@ To test if your terminal and font support it, check that all the necessary chara
 
 ![Character Example](https://gist.githubusercontent.com/agnoster/3712874/raw/characters.png)
 
-## What does it show?
+If you are using a Powerline-patched font, and that still doesn't look right (especially the segment separator or branch symbols), then you may be using an old, incompatible version of the Powerline-patched fonts. Download and install a current version of the font.
+
+# What does it show?
 
 - If the previous command failed (✘)
 - User @ Hostname (if user is not DEFAULT_USER, which can then be set in your profile)
@@ -29,7 +31,19 @@ To test if your terminal and font support it, check that all the necessary chara
 
 ![Screenshot](https://gist.githubusercontent.com/agnoster/3712874/raw/screenshot.png)
 
-## Future Work
+# Installation
+
+Download the files in this repo somewhere, and have your `~/.zshrc` `source` the `agnoster.zsh-theme` file.
+
+The Agnoster theme is also available through [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh/). If you have Oh My Zsh installed, just set `ZSH_THEME=agnoster` in your `~/.zshrc` before initializing OMZ.
+
+# Configuration
+
+Agnoster can be configured by setting these environment variables.
+
+* `$DEFAULT_USER` - A user name you typically log in as, and which should be omitted from the prompt display when you are that user.
+
+# Future Work
 
 I don't want to clutter it up too much, but I am toying with the idea of adding RVM (ruby version) and n (node.js version) display.
 
