@@ -26,6 +26,7 @@ To test if your terminal and font support it, check that all the necessary chara
   - Dirty working directory (±, color change)
 - Working directory
 - Elevated (root) privileges (⚡)
+- Name of the currently active python virtual environment
 
 ![Screenshot](https://gist.githubusercontent.com/agnoster/3712874/raw/screenshot.png)
 
