@@ -135,10 +135,20 @@ prompt_status() {
 
 # Display current virtual environment
 prompt_virtualenv() {
+  local env='';
+
   if [[ -n $VIRTUAL_ENV ]]; then
+    env=$VIRTUAL_ENV
+  fi
+
+  if [[ -n $CONDA_DEFAULT_ENV ]]; then
+    env=$CONDA_DEFAULT_ENV
+  fi
+
+  if [[ -n $env ]]; then
     color=cyan
     prompt_segment $color $PRIMARY_FG
-    print -Pn " $(basename $VIRTUAL_ENV) "
+    print -Pn " $(basename $env) "
   fi
 }
 
