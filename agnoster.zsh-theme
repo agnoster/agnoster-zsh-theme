@@ -83,9 +83,18 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   local user=`whoami`
+  local context=''
 
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@%m "
+    context="$user@%m "
+  fi
+
+  if [[ ! -z $CONDA_DEFAULT_ENV ]]; then
+    context="($CONDA_DEFAULT_ENV) $context"
+  fi
+
+  if [[ ! -z "$context" ]]; then
+    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$context"
   fi
 }
 
