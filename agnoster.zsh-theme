@@ -26,7 +26,9 @@
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
 CURRENT_BG='NONE'
-PRIMARY_FG=black
+if [[ -z "$PRIMARY_FG" ]]; then
+	PRIMARY_FG=black
+fi
 
 # Characters
 SEGMENT_SEPARATOR="\ue0b0"
