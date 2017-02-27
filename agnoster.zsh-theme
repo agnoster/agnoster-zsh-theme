@@ -85,6 +85,7 @@ prompt_git() {
     test -n "$(git status --porcelain --ignore-submodules)"
   }
   ref="$vcs_info_msg_0_"
+  remote_path=$(git config --get remote.origin.url)
   if [[ -n "$ref" ]]; then
     if is_dirty; then
       color=yellow
@@ -99,7 +100,7 @@ prompt_git() {
       ref="$DETACHED ${ref/.../}"
     fi
     prompt_segment $color $PRIMARY_FG
-    print -Pn " $ref"
+    print -Pn " $ref $remote_path"
   fi
 }
 
