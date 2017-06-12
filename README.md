@@ -29,6 +29,17 @@ To test if your terminal and font support it, check that all the necessary chara
 
 ![Screenshot](https://gist.githubusercontent.com/agnoster/3712874/raw/screenshot.png)
 
+## Selectively Disable Segments
+
+You can selectively disable segments which you do not wish to show.
+To disable a segment, set the appropriate environment variable to any value.
+
+* `AGNOSTER_DISABLE_STATUS` - Disable displaying status symbol
+* `AGNOSTER_DISABLE_CONTEXT` - Disable displaying username@hostname
+* `AGNOSTER_DISABLE_VIRTUALENV` - Disable displaying the currently active python virtualenv
+* `AGNOSTER_DISABLE_DIR` - Disable displaying the current working directory
+* `AGNOSTER_DISABLE_GIT` - Disable displaying the current git status and branch
+
 ## Future Work
 
 I don't want to clutter it up too much, but I am toying with the idea of adding RVM (ruby version) and n (node.js version) display.
