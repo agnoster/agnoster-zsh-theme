@@ -152,6 +152,7 @@ prompt_agnoster_setup() {
   autoload -Uz add-zsh-hook
   autoload -Uz vcs_info
 
+  setopt PROMPT_SUBST
   prompt_opts=(cr subst percent)
 
   add-zsh-hook precmd prompt_agnoster_precmd
