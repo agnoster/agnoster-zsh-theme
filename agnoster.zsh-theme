@@ -27,7 +27,7 @@
 
 CURRENT_BG='NONE'
 if [[ -z "$PRIMARY_FG" ]]; then
-	PRIMARY_FG=black
+  PRIMARY_FG=black
 fi
 
 # Characters
@@ -131,15 +131,22 @@ prompt_virtualenv() {
   fi
 }
 
+# Put cursor on a new line
+prompt_cursor(){
+  prompt_segment
+  print -n "\n$SEGMENT_SEPARATOR"
+}
+
 ## Main prompt
 prompt_agnoster_main() {
   RETVAL=$?
   CURRENT_BG='NONE'
   prompt_status
   prompt_context
+  prompt_git
   prompt_virtualenv
   prompt_dir
-  prompt_git
+  prompt_cursor
   prompt_end
 }
 
