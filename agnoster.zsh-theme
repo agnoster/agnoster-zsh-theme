@@ -33,13 +33,13 @@ if [[ -z "$PRIMARY_FG" ]]; then
 fi
 
 # Characters
-SEGMENT_SEPARATOR="\ue0b0"
-PLUSMINUS="\u00b1"
-BRANCH="\ue0a0"
-DETACHED="\u27a6"
-CROSS="\u2718"
-LIGHTNING="\u26a1"
-GEAR="\u2699"
+SEGMENT_SEPARATOR=$'\ue0b0'
+PLUSMINUS=$'\u00b1'
+BRANCH=$'\ue0a0'
+DETACHED=$'\u27a6'
+CROSS=$'\u2718'
+LIGHTNING=$'\u26a1'
+GEAR=$'\u2699'
 
 # Begin a segment
 # Takes two arguments, background and foreground. Both can be omitted,
@@ -49,22 +49,22 @@ prompt_segment() {
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
   [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
   if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    print -n "%{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%}"
+    PROMPT+="%{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%}"
   else
-    print -n "%{$bg%}%{$fg%}"
+    PROMPT+="%{$bg%}%{$fg%}"
   fi
   CURRENT_BG=$1
-  [[ -n $3 ]] && print -n $3
+  [[ -n $3 ]] && PROMPT+="$3"
 }
 
 # End the prompt, closing any open segments
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
-    print -n "%{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
+    PROMPT+="%{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
   else
-    print -n "%{%k%}"
+    PROMPT+="%{%k%}"
   fi
-  print -n "%{%f%}"
+  PROMPT+="%{%f%}"
   CURRENT_BG=''
 }
 
@@ -101,7 +101,7 @@ prompt_git() {
       ref="$DETACHED ${ref/.../}"
     fi
     prompt_segment $color $PRIMARY_FG
-    print -n " $ref"
+    PROMPT+=" $ref"
   fi
 }
 
@@ -147,7 +147,9 @@ prompt_agnoster_main() {
 
 prompt_agnoster_precmd() {
   vcs_info
-  PROMPT='%{%f%b%k%}$(prompt_agnoster_main) '
+  PROMPT='%{%f%b%k%}'
+  prompt_agnoster_main
+  PROMPT+=' '
 }
 
 prompt_agnoster_setup() {
