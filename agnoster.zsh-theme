@@ -25,6 +25,8 @@
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
+zmodload zsh/parameter
+
 CURRENT_BG='NONE'
 if [[ -z "$PRIMARY_FG" ]]; then
 	PRIMARY_FG=black
@@ -117,7 +119,7 @@ prompt_status() {
   symbols=()
   [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}$CROSS"
   [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}$LIGHTNING"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
+  [[ ${#jobstates} -ne 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
 
   [[ -n "$symbols" ]] && prompt_segment $PRIMARY_FG default " $symbols "
 }
