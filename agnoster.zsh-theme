@@ -137,12 +137,10 @@ prompt_status() {
 prompt_virtualenv() {
   local env='';
 
-  if [[ -n $VIRTUAL_ENV ]]; then
-    env=$VIRTUAL_ENV
-  fi
-
-  if [[ -n $CONDA_DEFAULT_ENV ]]; then
-    env=$CONDA_DEFAULT_ENV
+  if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
+    env="$CONDA_DEFAULT_ENV"
+  elif [[ -n "$VIRTUAL_ENV" ]]; then
+    env="$VIRTUAL_ENV"
   fi
 
   if [[ -n $env ]]; then
