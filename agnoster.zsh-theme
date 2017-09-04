@@ -108,6 +108,14 @@ prompt_dir() {
   prompt_segment blue $PRIMARY_FG ' %~ '
 }
 
+# Fs: filesystem on which the current working directory lies
+prompt_fs() {
+    local pwd=`pwd`
+    local fs=`df -PTh $pwd | awk '{print $2}' | tail -1`
+    
+    prompt_segment magenta $PRIMARY_FG " $fs "
+}
+
 # Status:
 # - was there an error
 # - am I root
@@ -139,6 +147,7 @@ prompt_agnoster_main() {
   prompt_context
   prompt_virtualenv
   prompt_dir
+  prompt_fs
   prompt_git
   prompt_end
 }
