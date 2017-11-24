@@ -153,6 +153,10 @@ prompt_agnoster_setup() {
   autoload -Uz vcs_info
 
   prompt_opts=(cr subst percent)
+  
+  # borrowed from promptinit, sets the prompt options in case pure was not
+  # initialized via promptinit.
+  setopt noprompt{bang,cr,percent,subst} "prompt${^prompt_opts[@]}"
 
   add-zsh-hook precmd prompt_agnoster_precmd
 
