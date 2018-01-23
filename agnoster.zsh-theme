@@ -22,6 +22,48 @@
 # jobs are running in this shell will all be displayed automatically when
 # appropriate.
 
+### Theme Configuration Initialization
+#
+# Override these settings in your ~/.zshrc
+
+# Current working directory
+: ${AGNOSTER_DIR_FG:=black}
+: ${AGNOSTER_DIR_BG:=blue}
+
+# user@host
+: ${AGNOSTER_CONTEXT_FG:=default}
+: ${AGNOSTER_CONTEXT_BG:=black}
+
+# Git related
+: ${AGNOSTER_GIT_CLEAN_FG:=black}
+: ${AGNOSTER_GIT_CLEAN_BG:=green}
+: ${AGNOSTER_GIT_DIRTY_FG:=black}
+: ${AGNOSTER_GIT_DIRTY_BG:=yellow}
+
+# Mercurial related
+: ${AGNOSTER_HG_NEWFILE_FG:=white}
+: ${AGNOSTER_HG_NEWFILE_BG:=red}
+: ${AGNOSTER_HG_CHANGED_FG:=black}
+: ${AGNOSTER_HG_CHANGED_BG:=yellow}
+: ${AGNOSTER_HG_CLEAN_FG:=black}
+: ${AGNOSTER_HG_CLEAN_BG:=green}
+
+# gEnv colors
+: ${AGNOSTER_VENV_FG:=black}
+: ${AGNOSTER_VENV_BG:=blue}
+
+# Status symbols
+: ${AGNOSTER_STATUS_RETVAL_FG:=red}
+: ${AGNOSTER_STATUS_ROOT_FG:=yellow}
+: ${AGNOSTER_STATUS_JOB_FG:=cyan}
+: ${AGNOSTER_STATUS_BG:=black}
+
+## Non-Color settings - set to 'true' to enable
+# Show the actual numeric return value rather than a cross symbol.
+: ${AGNOSTER_STATUS_RETVAL_NUMERIC:=false}
+# Show git working dir in the style "/git/root   master  relative/dir" instead of "/git/root/relative/dir   master"
+: ${AGNOSTER_GIT_INLINE:=false}
+
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
@@ -66,6 +108,18 @@ prompt_end() {
   CURRENT_BG=''
 }
 
+git_toplevel() {
+	local repo_root=$(git rev-parse --show-toplevel)
+	if [[ $repo_root = '' ]]; then
+		# We are in a bare repo. Use git dir as root
+		repo_root=$(git rev-parse --git-dir)
+		if [[ $repo_root = '.' ]]; then
+			repo_root=$(pwd)
+		fi
+	fi
+	echo -n $repo_root
+}
+
 ### Prompt components
 # Each component will draw itself, and hide itself if no information needs to be shown
 
@@ -74,23 +128,33 @@ prompt_context() {
   local user=`whoami`
 
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@%m "
+    prompt_segment "$AGNOSTER_CONTEXT_BG" "$AGNOSTER_CONTEXT_FG" " %(!.%{%F{yellow}%}.)$user@%m "
   fi
+}
+
+prompt_git_relative() {
+  local repo_root=$(git_toplevel)
+  local path_in_repo=$(pwd | sed "s/^$(echo "$repo_root" | sed 's:/:\\/:g;s/\$/\\$/g')//;s:^/::;s:/$::;")
+  if [[ $path_in_repo != '' ]]; then
+    prompt_segment "$AGNOSTER_DIR_BG" "$AGNOSTER_DIR_FG" "$path_in_repo"
+  fi;
 }
 
 # Git: branch/detached head, dirty status
 prompt_git() {
-  local color ref
+  local color fg ref
   is_dirty() {
     test -n "$(git status --porcelain --ignore-submodules)"
   }
   ref="$vcs_info_msg_0_"
   if [[ -n "$ref" ]]; then
     if is_dirty; then
-      color=yellow
+      color=$AGNOSTER_GIT_DIRTY_BG
+      fg=$AGNOSTER_GIT_DIRTY_FG
       ref="${ref} $PLUSMINUS"
     else
-      color=green
+      color=$AGNOSTER_GIT_CLEAN_BG
+      fg=$AGNOSTER_GIT_CLEAN_FG
       ref="${ref} "
     fi
     if [[ "${ref/.../}" == "$ref" ]]; then
@@ -98,14 +162,20 @@ prompt_git() {
     else
       ref="$DETACHED ${ref/.../}"
     fi
-    prompt_segment $color $PRIMARY_FG
+    prompt_segment $color $fg
     print -n " $ref"
+    [[ $AGNOSTER_GIT_INLINE == 'true' ]] && prompt_git_relative
   fi
 }
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue $PRIMARY_FG ' %~ '
+  if [[ $AGNOSTER_GIT_INLINE == 'true' ]] && $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    # Git repo and inline path enabled, hence only show the git root
+    prompt_segment "$AGNOSTER_DIR_BG" "$AGNOSTER_DIR_FG" "$(git_toplevel | sed "s:^$HOME:~:")"
+  else
+    prompt_segment "$AGNOSTER_DIR_BG" "$AGNOSTER_DIR_FG" '%~'
+  fi
 }
 
 # Status:
@@ -115,18 +185,21 @@ prompt_dir() {
 prompt_status() {
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}$CROSS"
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}$LIGHTNING"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
+  if [[ $AGNOSTER_STATUS_RETVAL_NUMERIC == 'true' ]]; then
+    [[ $RETVAL -ne 0 ]] && symbols+="%{%F{$AGNOSTER_STATUS_RETVAL_FG}%}$RETVAL"
+  else
+    [[ $RETVAL -ne 0 ]] && symbols+="%{%F{$AGNOSTER_STATUS_RETVAL_FG}%}$CROSS"
+  fi
+  [[ $UID -eq 0 ]] && symbols+="%{%F{$AGNOSTER_STATUS_ROOT_FG}%}$LIGHTNING"
+  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{$AGNOSTER_STATUS_JOB_FG}%}$GEAR"
 
-  [[ -n "$symbols" ]] && prompt_segment $PRIMARY_FG default " $symbols "
+  [[ -n "$symbols" ]] && prompt_segment "$AGNOSTER_STATUS_BG" default " $symbols "
 }
 
 # Display current virtual environment
 prompt_virtualenv() {
   if [[ -n $VIRTUAL_ENV ]]; then
-    color=cyan
-    prompt_segment $color $PRIMARY_FG
+    prompt_segment "$AGNOSTER_VENV_BG" "$AGNOSTER_VENV_FG"
     print -Pn " $(basename $VIRTUAL_ENV) "
   fi
 }
