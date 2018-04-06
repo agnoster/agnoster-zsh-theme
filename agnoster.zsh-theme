@@ -105,7 +105,7 @@ prompt_git() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue $PRIMARY_FG $(shrink_path -f)
+  prompt_segment blue black $(shrink_path -f) ' '
 }
 
 # Status:
