@@ -100,6 +100,15 @@ prompt_git() {
     fi
     prompt_segment $color $PRIMARY_FG
     print -n " $ref"
+    # Print diff from remote
+    ahead=$(git_commits_ahead)
+    behind=$(git_commits_behind)
+    if [ -n "$ahead" ]; then
+      print -n " ↑$ahead"
+    fi
+    if [ -n "$behind" ]; then
+      print -n " ↓$behind"
+    fi
   fi
 }
 
