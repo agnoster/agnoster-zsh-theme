@@ -134,7 +134,7 @@ prompt_status() {
 # Display current virtual environment
 prompt_virtualenv() {
   if [[ -n $VIRTUAL_ENV ]]; then
-    virt_prompt=$(grep -oiE "x\(.+\)" $VIRTUAL_ENV/bin/activate|cut  -c3-)
+    virt_prompt=$(grep -oiE "x\(.+\)" $VIRTUAL_ENV/bin/activate|cut  -c3-|rev|cut -c2-|rev)
     color=cyan
     prompt_segment $color $PRIMARY_FG
     print -n " $virt_prompt"
