@@ -24,7 +24,7 @@
 
 ### Segments of the prompt, default order declaration
 
-typeset -aHg AGNOSTER_PROMPT=(
+typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
     prompt_status
     prompt_context
     prompt_virtualenv
@@ -146,7 +146,7 @@ prompt_virtualenv() {
 prompt_agnoster_main() {
   RETVAL=$?
   CURRENT_BG='NONE'
-  for prompt_segment in "${AGNOSTER_PROMPT[@]}"; do
+  for prompt_segment in "${AGNOSTER_PROMPT_SEGMENTS[@]}"; do
     [[ -n $prompt_segment ]] && $prompt_segment
   done
 }
