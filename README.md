@@ -71,7 +71,7 @@ A small demo of the dummy custom prompt segment, which has been created with hel
 # Both can be omitted, rendering default background/foreground.
 
 customize_agnoster() {
-  prompt_segment 'NONE' 'NONE' " ⚙ ⚡⚡⚡ ⚙  "
+  prompt_segment 'red' '' ' ⚙ ⚡⚡⚡ ⚙  '
 }
 ```
 ![Customization demo](https://github.com/apodkutin/agnoster-zsh-theme/raw/customize-prompt/agnoster_customization.gif)
