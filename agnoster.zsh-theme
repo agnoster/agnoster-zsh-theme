@@ -116,7 +116,12 @@ prompt_git() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue $PRIMARY_FG ' %~ '
+  if hash shrink_path 2>/dev/null; then
+    prompt_segment blue $PRIMARY_FG $(shrink_path -f) ' '
+  else
+    prompt_segment blue $PRIMARY_FG ' %~ '
+  fi
+  
 }
 
 # Status:
