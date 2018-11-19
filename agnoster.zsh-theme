@@ -111,6 +111,15 @@ prompt_git() {
     fi
     prompt_segment $color $PRIMARY_FG
     print -n " $ref"
+    # Print diff from remote
+    ahead=$(git_commits_ahead)
+    behind=$(git_commits_behind)
+    if [ -n "$ahead" ]; then
+      print -n " ↑$ahead"
+    fi
+    if [ -n "$behind" ]; then
+      print -n " ↓$behind"
+    fi
   fi
 }
 
@@ -136,9 +145,10 @@ prompt_status() {
 # Display current virtual environment
 prompt_virtualenv() {
   if [[ -n $VIRTUAL_ENV ]]; then
+    virt_prompt=$(grep -oiE "x\(.+\)" $VIRTUAL_ENV/bin/activate|cut  -c3-)
     color=cyan
     prompt_segment $color $PRIMARY_FG
-    print -Pn " $(basename $VIRTUAL_ENV) "
+    print -n " $virt_prompt"
   fi
 }
 
