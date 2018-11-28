@@ -41,6 +41,10 @@ if [[ -z "$PRIMARY_FG" ]]; then
 	PRIMARY_FG=black
 fi
 
+# if AGNOSTER_SHORT_PATH is set use %1~ for the path value
+# that will turn '~/.oh-my-zsh/custom/themes' in to 'themes'
+[ -n "${AGNOSTER_SHORT_PATH}" ] && AGNOSTER_CURRENT_PATH=' %1~ '
+
 # Characters
 SEGMENT_SEPARATOR="\ue0b0"
 PLUSMINUS="\u00b1"
@@ -116,7 +120,8 @@ prompt_git() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue $PRIMARY_FG ' %~ '
+  local current_path=${AGNOSTER_CURRENT_PATH:=' %~ '}
+  prompt_segment blue $PRIMARY_FG "${current_path}"
 }
 
 # Status:
