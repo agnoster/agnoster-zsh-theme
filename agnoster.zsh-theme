@@ -69,7 +69,8 @@ prompt_segment() {
 # End the prompt, closing any open segments
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
-    print -n "%{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
+    print -n "%{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR\n$"
+    print -n " %{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
   else
     print -n "%{%k%}"
   fi
