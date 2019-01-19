@@ -38,7 +38,7 @@ DETACHED="\u27a6"
 CROSS="\u2718"
 LIGHTNING="\u26a1"
 GEAR="\u2699"
-SNAKE="$emoji[snake]"
+SNAKE="🐍"
 
 # Begin a segment
 # Takes two arguments, background and foreground. Both can be omitted,
