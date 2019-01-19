@@ -29,5 +29,5 @@ To test if your terminal and font support it, check that all the necessary chara
 - Current python venv prompt
 - Commit diff from remote
 - A snake emoji if a venv is activated
-
+![Fork specific screenshot](https://user-images.githubusercontent.com/6463334/51431140-74c9d080-1c2d-11e9-89e5-42e05cad9f77.png)
 ![Screenshot](https://gist.githubusercontent.com/agnoster/3712874/raw/screenshot.png)
