@@ -38,6 +38,7 @@ DETACHED="\u27a6"
 CROSS="\u2718"
 LIGHTNING="\u26a1"
 GEAR="\u2699"
+SNAKE="$emoji[snake]"
 
 # Begin a segment
 # Takes two arguments, background and foreground. Both can be omitted,
@@ -134,10 +135,11 @@ prompt_status() {
 # Display current virtual environment
 prompt_virtualenv() {
   if [[ -n $VIRTUAL_ENV ]]; then
-    virt_prompt=$(grep -oiE "x\(.+\)" $VIRTUAL_ENV/bin/activate|cut  -c3-|rev|cut -c2-|rev)
+    virt_prompt=$(grep -oiE "x\(.+\)" $VIRTUAL_ENV/bin/activate 2>/dev/null |cut  -c3-|rev|cut -c2-|rev)
+    # [ -z $virt_prompt ] && virt_prompt=$(basename $VIRTUAL_ENV)
     color=cyan
     prompt_segment $color $PRIMARY_FG
-    print -n " $virt_prompt"
+    print -Pn " $SNAKE $virt_prompt"
   fi
 }
 
