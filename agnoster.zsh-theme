@@ -27,7 +27,8 @@
 typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
     prompt_status
     prompt_context
-    prompt_virtualenv
+    #prompt_virtualenv
+    prompt_condaenv
     prompt_dir
     prompt_git
     prompt_end
@@ -131,6 +132,15 @@ prompt_status() {
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
 
   [[ -n "$symbols" ]] && prompt_segment $PRIMARY_FG default " $symbols "
+}
+
+# Display current conda environment
+prompt_condaenv() {
+  if [[ -n $CONDA_DEFAULT_ENV ]]; then
+    color=cyan
+    prompt_segment $color $PRIMARY_FG
+    print -Pn " $(basename $CONDA_DEFAULT_ENV) "
+  fi
 }
 
 # Display current virtual environment
