@@ -83,9 +83,22 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   local user=`whoami`
+  local foreground background
+        
+  if [[ -n $HOST_FG ]]; then
+    foreground=$HOST_FG
+  else
+    foreground=default
+  fi
+
+  if [[ -n $HOST_BG ]]; then
+    background=$HOST_BG
+  else
+    background=$PRIMARY_FG
+  fi
 
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@%m "
+    prompt_segment $background $foreground " %(!.%{%F{yellow}%}.)$user@%m "
   fi
 }
 
