@@ -197,7 +197,7 @@ prompt_hg() {
 prompt_dir() {
   # prompt_segment blue black '%~'
   # Maybe add an option to enable disable the trimming
-  local trim_path=$(print -P ' %~ ' | sed -E -e "s#([^a-z]*[a-z])[^/]*/#\1/#g")
+  local trim_path=$(print -P ' %~ ' | sed -E -e "s#([^a-zA-Z_]*[a-zA-Z_])[^/]*/#\1/#g")
   prompt_segment blue black $trim_path
 }
 
@@ -230,7 +230,7 @@ build_prompt() {
   prompt_virtualenv
   prompt_context
   prompt_dir
-  prompt_git
+  # prompt_git
   prompt_bzr
   prompt_hg
   prompt_end
