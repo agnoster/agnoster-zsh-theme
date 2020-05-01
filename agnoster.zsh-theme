@@ -28,6 +28,7 @@ typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
     prompt_status
     prompt_context
     prompt_virtualenv
+    prompt_condaenv
     prompt_dir
     prompt_git
     prompt_end
@@ -139,6 +140,16 @@ prompt_virtualenv() {
     color=cyan
     prompt_segment $color $PRIMARY_FG
     print -Pn " $(basename $VIRTUAL_ENV) "
+  fi
+}
+
+# conda env: current anaconda env
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+prompt_condaenv() {
+  if [[ -n $CONDA_PROMPT_MODIFIER ]]; then
+    color=green
+    prompt_segment $color $PRIMARY_FG
+    print -Pn " $(basename $CONDA_PROMPT_MODIFIER) "
   fi
 }
 
