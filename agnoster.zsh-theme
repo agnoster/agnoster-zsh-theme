@@ -22,138 +22,116 @@
 # jobs are running in this shell will all be displayed automatically when
 # appropriate.
 
-### Segments of the prompt, default order declaration
-
-typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
-    prompt_status
-    prompt_context
-    prompt_virtualenv
-    prompt_dir
-    prompt_git
-    prompt_end
-)
-
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
-CURRENT_BG='NONE'
-if [[ -z "$PRIMARY_FG" ]]; then
-	PRIMARY_FG=black
-fi
-
 # Characters
 SEGMENT_SEPARATOR="\ue0b0"
-PLUSMINUS="\u00b1"
-BRANCH="\ue0a0"
-DETACHED="\u27a6"
-CROSS="\u2718"
-LIGHTNING="\u26a1"
-GEAR="\u2699"
+SEGMENT_THIN_SEPARATOR="\ue0b1"
+AGNOSTER_ICON_PLUSMINUS="\u00b1"
+AGNOSTER_ICON_BRANCH="\ue0a0"
+AGNOSTER_ICON_DETACHED="\u27a6"
+AGNOSTER_ICON_ERROR="\u2718"
+AGNOSTER_ICON_ROOT="\u2317"
+# AGNOSTER_ICON_BG="\u21BB"
+AGNOSTER_ICON_BG="\u22EF "
 
-# Begin a segment
-# Takes two arguments, background and foreground. Both can be omitted,
-# rendering default background/foreground.
-prompt_segment() {
-  local bg fg
-  [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
-  [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
-  if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    print -n "%{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%}"
-  else
-    print -n "%{$bg%}%{$fg%}"
+agnoster_prompt_segment() {
+  if [[ "$CURRENT_BG" != "$1" ]]; then
+    print -n "%1(l.%{%s%F{$CURRENT_BG}%K{$1}%}$SEGMENT_SEPARATOR.)%{%s%K{$1}%f%}"
+    CURRENT_BG=$1
   fi
-  CURRENT_BG=$1
-  [[ -n $3 ]] && print -n $3
 }
 
-# End the prompt, closing any open segments
-prompt_end() {
-  if [[ -n $CURRENT_BG ]]; then
-    print -n "%{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
-  else
-    print -n "%{%k%}"
+agnoster_prompt_segment_inverted() {
+  if [[ "$CURRENT_BG" != "$1" ]]; then
+    print -n "%1(l.%{%S%K{$CURRENT_BG}%F{$1}%}$SEGMENT_SEPARATOR.)%{%S%F{$1}%k%}"
+    CURRENT_BG=$1
   fi
-  print -n "%{%f%}"
-  CURRENT_BG=''
 }
 
 ### Prompt components
 # Each component will draw itself, and hide itself if no information needs to be shown
 
-# Context: user@hostname (who am I and where am I)
-prompt_context() {
-  local user=`whoami`
-
-  if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@%m "
-  fi
-}
-
-# Git: branch/detached head, dirty status
-prompt_git() {
-  local color ref
-  is_dirty() {
-    test -n "$(git status --porcelain --ignore-submodules)"
-  }
-  ref="$vcs_info_msg_0_"
-  if [[ -n "$ref" ]]; then
-    if is_dirty; then
-      color=yellow
-      ref="${ref} $PLUSMINUS"
-    else
-      color=green
-      ref="${ref} "
-    fi
-    if [[ "${ref/.../}" == "$ref" ]]; then
-      ref="$BRANCH $ref"
-    else
-      ref="$DETACHED ${ref/.../}"
-    fi
-    prompt_segment $color $PRIMARY_FG
-    print -n " $ref"
-  fi
-}
-
-# Dir: current working directory
-prompt_dir() {
-  prompt_segment blue $PRIMARY_FG ' %~ '
-}
+typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
+  status
+  dir
+  git
+)
 
 # Status:
 # - was there an error
 # - am I root
 # - are there background jobs?
-prompt_status() {
-  local symbols
-  symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}$CROSS"
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}$LIGHTNING"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
-
-  [[ -n "$symbols" ]] && prompt_segment $PRIMARY_FG default " $symbols "
+# - user@hostname (who am I and where am I)
+agnoster_prompt_status() {
+  agnoster_prompt_segment default
+  print -n "%0(?..%{%F{red}%} $AGNOSTER_ICON_ERROR)"
+  print -n "%1(j.%{%F{cyan}%} $AGNOSTER_ICON_BG.)"
+  print -n "%{%f%}"
+  print -n "%1(l. .)"
+  local user=""
+  if [[ "$UID" == 0 ]]; then
+    agnoster_prompt_segment_inverted magenta
+    user="$AGNOSTER_ICON_ROOT %n"
+  elif [[ "$USER" != "${DEFAULT_USER:-$USER}" || -n "$SSH_CONNECTION" ]]; then
+    agnoster_prompt_segment default
+    user="%n"
+  fi
+  local host=""
+  if [[ -n "$SSH_CONNECTION" ]]; then
+    host="@%m"
+  fi
+  if [[ -n "$user$host" ]]; then
+    print -n " $user$host "
+  fi
 }
 
-# Display current virtual environment
-prompt_virtualenv() {
-  if [[ -n $VIRTUAL_ENV ]]; then
-    color=cyan
-    prompt_segment $color $PRIMARY_FG
-    print -Pn " $(basename $VIRTUAL_ENV) "
+# Dir: current working directory
+agnoster_prompt_dir() {
+  agnoster_prompt_segment_inverted blue
+  print -n ' %~ '
+}
+
+# Git: branch/detached head, dirty status
+agnoster_prompt_git() {
+  local color ref
+  is_dirty() {
+    test -n "$(git status --porcelain --ignore-submodules -unormal)"
+  }
+  ref="$vcs_info_msg_0_"
+  if [[ -n "$ref" ]]; then
+    if is_dirty; then
+      color=yellow
+      ref="${ref} $AGNOSTER_ICON_PLUSMINUS"
+    else
+      color=green
+      ref="${ref} "
+    fi
+    if [[ "${ref/.../}" == "$ref" ]]; then
+      ref="$AGNOSTER_ICON_BRANCH $ref"
+    else
+      ref="$AGNOSTER_ICON_DETACHED ${ref/.../}"
+    fi
+    agnoster_prompt_segment_inverted $color
+    print -Pn " $ref"
   fi
 }
 
 ## Main prompt
 prompt_agnoster_main() {
   RETVAL=$?
-  CURRENT_BG='NONE'
+  CURRENT_BG=''
   for prompt_segment in "${AGNOSTER_PROMPT_SEGMENTS[@]}"; do
-    [[ -n $prompt_segment ]] && $prompt_segment
+    [[ -n $prompt_segment ]] && "agnoster_prompt_$prompt_segment"
   done
+  # End the prompt
+  agnoster_prompt_segment default
 }
 
 prompt_agnoster_precmd() {
   vcs_info
-  PROMPT='%{%f%b%k%}$(prompt_agnoster_main) '
+  PROMPT='%{%f%b%k%}$(prompt_agnoster_main)%{%f%b%k%} '
 }
 
 prompt_agnoster_setup() {
