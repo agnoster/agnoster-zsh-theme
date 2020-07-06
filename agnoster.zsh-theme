@@ -205,7 +205,8 @@ prompt_hg() {
 # Dir: current working directory
 prompt_dir() {
   #prompt_segment blue $CURRENT_FG '%~'
-  prompt_segment blue $CURRENT_FG "`basename $(pwd)`"
+  #prompt_segment blue $CURRENT_FG "`basename $(pwd)`"
+  prompt_segment 39d $CURRENT_FG "`basename $(pwd)`"
 }
 
 # Virtualenv: current working virtualenv
@@ -239,7 +240,7 @@ prompt_aws() {
   [[ -z "$AWS_PROFILE" ]] && return
   case "$AWS_PROFILE" in
     *-prod|*production*) prompt_segment red yellow  "AWS: $AWS_PROFILE" ;;
-    *) prompt_segment green black "AWS: $AWS_PROFILE" ;;
+    *) prompt_segment cyan black "AWS: $AWS_PROFILE" ;;
   esac
 }
 
@@ -247,23 +248,22 @@ prompt_awsvault() {
   [[ -z "$AWS_VAULT" ]] && return
   case "$AWS_VAULT" in
     *-prod|*production*) prompt_segment red yellow  "AWS_VAULT: $AWS_VAULT" ;;
-    *) prompt_segment blue black "AWS_VAULT: $AWS_VAULT" ;;
+    *) prompt_segment cyan black "AWS_VAULT: $AWS_VAULT" ;;
   esac
 }
 
-#prompt_k8s_context() {
-#    prompt_segment green black "CTX: $KUBE_PS1_CLUSTER_FUNCTION" ;;
-#}
-
 prompt_kubecontext() {
+k8s_logo=$'\u2388'
+#k8s_logo=$'\u2638'
 CTX=$(kubectx -c)
 CNS=$(kubens -c)
+
   if [[ $CTX == *"tooling"* ]]; then
-        prompt_segment green black "${CTX}:${CNS}"
+        prompt_segment yellow black "${k8s_logo}${CTX}:${CNS}"
   elif [[ $CTX == *"nonprod"* ]]; then
-        prompt_segment yellow black "${CTX}:${CNS}"
+        prompt_segment green black "${k8s_logo}${CTX}:${CNS}"
   elif [[ $CTX == *"prod"* ]]; then
-        prompt_segment red yellow "${CTX}:${CNS}"
+        prompt_segment red yellow "${k8s_logo}${CTX}:${CNS}"
   fi
 }
 
@@ -272,11 +272,11 @@ build_prompt() {
   RETVAL=$?
   prompt_status
   prompt_virtualenv
+  prompt_context
+  prompt_kubecontext
+  prompt_dir
   prompt_aws
   prompt_awsvault
-  prompt_kubecontext
-  prompt_context
-  prompt_dir
   prompt_git
   prompt_bzr
   prompt_hg
