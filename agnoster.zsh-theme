@@ -137,6 +137,8 @@ prompt_status() {
 prompt_virtualenv() {
   local env='';
 
+  # if "$CONDA_DEFAULT_ENV" variable exists,
+  # then you are using conda to manage python virtual env
   if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
     env="$CONDA_DEFAULT_ENV"
   elif [[ -n "$VIRTUAL_ENV" ]]; then
