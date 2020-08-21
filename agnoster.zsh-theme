@@ -135,10 +135,20 @@ prompt_status() {
 
 # Display current virtual environment
 prompt_virtualenv() {
-  if [[ -n $VIRTUAL_ENV ]]; then
+  local env='';
+
+  # if "$CONDA_DEFAULT_ENV" variable exists,
+  # then you are using conda to manage python virtual env
+  if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
+    env="$CONDA_DEFAULT_ENV"
+  elif [[ -n "$VIRTUAL_ENV" ]]; then
+    env="$VIRTUAL_ENV"
+  fi
+
+  if [[ -n $env ]]; then
     color=cyan
     prompt_segment $color $PRIMARY_FG
-    print -Pn " $(basename $VIRTUAL_ENV) "
+    print -Pn " $(basename $env) "
   fi
 }
 
