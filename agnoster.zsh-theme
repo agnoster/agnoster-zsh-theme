@@ -28,6 +28,7 @@ typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
     prompt_status
     prompt_context
     prompt_virtualenv
+    prompt_kubecontext
     prompt_dir
     prompt_git
     prompt_end
@@ -139,6 +140,20 @@ prompt_virtualenv() {
     color=cyan
     prompt_segment $color $PRIMARY_FG
     print -Pn " $(basename $VIRTUAL_ENV) "
+  fi
+}
+
+prompt_kubecontext() {
+  local env='';
+
+  if [[ -n $KUBE_PS1_CONTEXT ]]; then
+    env="$KUBE_PS1_SYMBOL_DEFAULT$KUBE_PS1_SEPARATOR$KUBE_PS1_CONTEXT$KUBE_PS1_DIVIDER$KUBE_PS1_NAMESPACE"
+  fi
+
+  if [[ -n $env ]]; then
+    color=magenta
+    prompt_segment $color $PRIMARY_FG
+    print -Pn " $env "
   fi
 }
 
