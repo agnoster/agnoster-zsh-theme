@@ -33,27 +33,38 @@ typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
     prompt_end
 )
 
+typeset -aHg AGNOSTER_RPROMPT_SEGMENTS=()
+
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
 CURRENT_BG='NONE'
 if [[ -z "$PRIMARY_FG" ]]; then
-	PRIMARY_FG=black
+  PRIMARY_FG=black
 fi
 
 # Characters
 SEGMENT_SEPARATOR="\ue0b0"
+RSEGMENT_SEPARATOR="\ue0b2"
 PLUSMINUS="\u00b1"
 BRANCH="\ue0a0"
 DETACHED="\u27a6"
 CROSS="\u2718"
 LIGHTNING="\u26a1"
 GEAR="\u2699"
+MOON="\u23fe"
 
 # Begin a segment
 # Takes two arguments, background and foreground. Both can be omitted,
 # rendering default background/foreground.
+# Also takes a third argument which is just printed out.
 prompt_segment() {
+  local f="prompt_segment_$PROMPT_SIDE"
+  [[ -n $f ]] && $f "$@"
+}
+
+# left side (PROMPT) segment
+prompt_segment_left() {
   local bg fg
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
   [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
@@ -66,14 +77,38 @@ prompt_segment() {
   [[ -n $3 ]] && print -n $3
 }
 
+prompt_segment_right() {
+  local bg fg
+  [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
+  [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
+  if [[ $1 != $CURRENT_BG ]]; then
+    print -n "%{%F{$1}%}$RSEGMENT_SEPARATOR%{$bg%}%{$fg%}"
+  else
+    print -n "%{$bg%}%{$fg%}"
+  fi
+  CURRENT_BG=$1
+  [[ -n $3 ]] && print -n $3
+}
+
 # End the prompt, closing any open segments
 prompt_end() {
+  local f="prompt_end_$PROMPT_SIDE"
+  [[ -n $f ]] && $f "$@"
+}
+
+prompt_end_left() {
   if [[ -n $CURRENT_BG ]]; then
     print -n "%{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
   else
     print -n "%{%k%}"
   fi
   print -n "%{%f%}"
+  CURRENT_BG=''
+}
+
+# End the right prompt
+prompt_end_right() {
+  print -n "%{%k%f%}"
   CURRENT_BG=''
 }
 
@@ -142,11 +177,43 @@ prompt_virtualenv() {
   fi
 }
 
+# Time indicator
+# - shows the time using %*
+# - blue by default but turns red if the previous command failed
+prompt_time() {
+  local time_color='blue'
+  [[ $RETVAL -ne 0 ]] && time_color='red'
+  prompt_segment $time_color black ' %* '
+}
+
+# Background jobs
+# - if there is a single background job shows the name of the job
+# - otherwise shows a count of how many background jobs there are
+prompt_jobs() {
+  local count=$(jobs -l |wc -l |awk '{print $1}')
+  if [[ $count -eq 1 ]]; then
+    local name=$(jobs -l |awk '{print $5}')
+    prompt_segment yellow black " $name $MOON "
+  elif [[ $count -gt 1 ]]; then
+    prompt_segment yellow black " $count $MOON "
+  fi
+}
+
 ## Main prompt
 prompt_agnoster_main() {
   RETVAL=$?
   CURRENT_BG='NONE'
+  PROMPT_SIDE='left'
   for prompt_segment in "${AGNOSTER_PROMPT_SEGMENTS[@]}"; do
+    [[ -n $prompt_segment ]] && $prompt_segment
+  done
+}
+
+prompt_agnoster_right() {
+  RETVAL=$?
+  CURRENT_BG='NONE'
+  PROMPT_SIDE='right'
+  for prompt_segment in "${AGNOSTER_RPROMPT_SEGMENTS[@]}"; do
     [[ -n $prompt_segment ]] && $prompt_segment
   done
 }
@@ -154,6 +221,7 @@ prompt_agnoster_main() {
 prompt_agnoster_precmd() {
   vcs_info
   PROMPT='%{%f%b%k%}$(prompt_agnoster_main) '
+  RPROMPT='%{%f%b%k%}$(prompt_agnoster_right)'
 }
 
 prompt_agnoster_setup() {
