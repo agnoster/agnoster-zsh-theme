@@ -133,6 +133,19 @@ prompt_status() {
   [[ -n "$symbols" ]] && prompt_segment $PRIMARY_FG default " $symbols "
 }
 
+# K8s:
+# - display current default namespace and context
+prompt_k8s() {
+  # break without kubectx/kubens installed or if configured to not show
+  ! [[ -x "$(command -v kubectx)" && -x "$(command -v kubens)" && -z ${DISABLE_K8S_PROMPT+x} ]] && return
+
+  # get namespace and context defaults
+
+  K8S_CONTEXT=$(kubectx -c)
+  K8S_NAMESPACE=$(kubens -c)
+  prompt_segment red yellow  "K8S: $K8S_CONTEXT ($K8S_NAMESPACE)"
+}
+
 # Display current virtual environment
 prompt_virtualenv() {
   if [[ -n $VIRTUAL_ENV ]]; then
