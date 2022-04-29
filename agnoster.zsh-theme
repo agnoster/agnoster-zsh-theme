@@ -30,6 +30,7 @@ typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
     prompt_virtualenv
     prompt_dir
     prompt_git
+    prompt_node_version
     prompt_end
 )
 
@@ -140,6 +141,35 @@ prompt_virtualenv() {
     prompt_segment $color $PRIMARY_FG
     print -Pn " $(basename $VIRTUAL_ENV) "
   fi
+}
+
+# Helper fucntion to check if a command exists
+exists() {
+  command -v $1 > /dev/null 2>&1
+}
+
+# Show NODE JS status only for JS/TS specific folders(based on spaceship-prompt)
+function prompt_node_version {
+ [[ -f package.json || -d node_modules || -n *.js(#qN^/) || *.ts(#qN^/) ]] || return
+
+    local 'node_version'
+
+    if exists fnm; then
+      node_version=$(fnm current 2>/dev/null)
+      [[ $node_version == "system" || $node_version == "node" ]] && return
+    elif exists nvm; then
+      node_version=$(nvm current 2>/dev/null)
+      [[ $node_version == "system" || $node_version == "node" ]] && return
+    elif exists nodenv; then
+      node_version=$(nodenv version-name)
+      [[ $node_version == "system" || $node_version == "node" ]] && return
+    elif exists node; then
+      node_version=$(node -v 2>/dev/null)
+    else
+      return
+    fi
+
+    prompt_segment black default "%{%F{green}%} ⬢ ${node_version} "
 }
 
 ## Main prompt
