@@ -151,7 +151,7 @@ prompt_k8s() {
   if [ ! -z ${KUBECONFIG} ]; then
     k8s_context=$(awk '/current-context/{print $2}' $KUBECONFIG)
   elif [ -f "$HOME/.kube/config" ]; then
-    k8s_context=$(awk '/current-context/{print $2}' $HOME/.kube/config)
+    k8s_context=$(awk '/current-context/{print $2}' $HOME/.kube/config | cut -d':' -f6)
   fi
   if [ ! -z ${k8s_context} ]; then
     color=cyan
@@ -161,10 +161,10 @@ prompt_k8s() {
 }
 
 prompt_aws() {
-  if [ ! -z ${AWS_PROFILE} ]; then
+  if [ ! -z ${AWS_VAULT} ]; then
     color=yellow
     prompt_segment $color $PRIMARY_FG
-    print -Pn " ⓦ ${AWS_PROFILE} "
+    print -Pn " ⓦ ${AWS_VAULT} "
   elif [ ! -z ${AWS_DEFAULT_PROFILE} ]; then
     color=yellow
     prompt_segment $color $PRIMARY_FG
