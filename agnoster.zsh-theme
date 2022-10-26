@@ -200,7 +200,7 @@ prompt_hg() {
 prompt_condaenv() {
   local condaenv_path="$CONDA_DEFAULT_ENV"
   if [[ -n $condaenv_path ]]; then
-    prompt_segment green white "`basename $condaenv_path`"
+    prompt_segment cyan $CURRENT_FG "`basename $condaenv_path`"
   fi
 }
 
