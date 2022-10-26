@@ -196,6 +196,14 @@ prompt_hg() {
   fi
 }
 
+# Conda env
+prompt_condaenv() {
+  local condaenv_path="$CONDA_DEFAULT_ENV"
+  if [[ -n $condaenv_path ]]; then
+    prompt_segment green white "`basename $condaenv_path`"
+  fi
+}
+
 # Dir: current working directory
 prompt_dir() {
   if [[ -n $AGNOSTER_THEME_TRIM ]] ; then
@@ -245,6 +253,7 @@ prompt_aws() {
 build_prompt() {
   RETVAL=$?
   prompt_status
+  prompt_condaenv
   prompt_virtualenv
   prompt_aws
   prompt_context
