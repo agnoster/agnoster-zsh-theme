@@ -948,7 +948,7 @@ prompt_aws() {
   [[ -z "$AWS_PROFILE" ]] && return
   case "$AWS_PROFILE" in
     *-prod|*production*) prompt_segment red yellow  "AWS: $AWS_PROFILE" ;;
-    *) prompt_segment green black "AWS: $AWS_PROFILE" ;;
+    *) prompt_segment green black " $AWS_PROFILE" ;;
   esac
 }
 
@@ -957,8 +957,8 @@ build_prompt() {
   RETVAL=$?
   prompt_status
   prompt_condaenv
-  prompt_virtualenv
   prompt_aws
+  prompt_virtualenv
   prompt_context
   prompt_dir
   prompt_git
