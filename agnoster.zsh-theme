@@ -607,7 +607,8 @@ prompt_git() {
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
+    trimed_ref=$(echo ${ref/refs\/heads\//$PL_BRANCH_CHAR } | sed -E -e "s#([^a-zA-Z_]*[a-zA-Z_])[^/]*/#\1/#g")
+    echo -n "$trimed_ref${vcs_info_msg_0_%% }${mode}"
   fi
 }
 
