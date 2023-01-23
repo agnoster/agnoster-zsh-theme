@@ -29,6 +29,17 @@
 # jobs are running in this shell will all be displayed automatically when
 # appropriate.
 
+### Segments of the prompt, default order declaration
+
+typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
+    prompt_status
+    prompt_context
+    prompt_virtualenv
+    prompt_dir
+    prompt_git
+    prompt_end
+)
+
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
@@ -319,6 +330,8 @@ build_prompt() {
   prompt_bzr
   prompt_hg
   prompt_end
+
+  CURRENT_BG='NONE'
 }
 
 PROMPT='%{%f%b%k%}$(build_prompt) '
